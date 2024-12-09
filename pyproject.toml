@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "weekly"
+version = "0.1.0"
+description = ""
+authors = ["shadi-fsai <163780314+shadi-fsai@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "<=3.13,>=3.10"
+ollama = "^0.4.4"
+litellm = "^1.54.0"
+
+[tool.poetry.scripts]
+weekly = "weekly.main:main"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

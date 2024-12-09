@@ -1,0 +1,5 @@
+[CrewAI] CrewAI is one of the projects our team has been training new interns on
+[Llama-stack] Llama stack is one of the projects our team has been training new interns on
+[Community Launch] Our goal for this workstream is to create a new way to train new interns that doesn't rely on 1x1 mentoring
+[Volunteer recruitment] Our organization relies on volunteer team leads, we aim to increase the number of team leads available
+[Intern recruitment] To achieve our goal of training more pre-industry interns, we need to attract interns to our program
