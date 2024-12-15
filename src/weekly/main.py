@@ -2,11 +2,11 @@ from litellm import completion
 import csv
 import logging
 
-my_model = "groq/Llama-3.3-70b-Versatile" 
-my_api_base = None 
+#my_model = "groq/Llama-3.3-70b-Versatile" 
+#my_api_base = None 
 
-#my_model ='ollama/llama3.3'
-#my_api_base = "http://localhost:11434"
+my_model ='ollama/llama3.3:70b-instruct-q2_K'
+my_api_base = "http://localhost:11434"
 
 
 class WeeklyReporter:

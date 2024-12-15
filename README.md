@@ -6,8 +6,8 @@ It can be used with ollama locally or groq using API, to use with groq you need 
 ## Ollama
 
 Download Ollama from https://ollama.com/download
-Prior to running run 'ollama pull llama3.3' in your command line.
-This will require your machine to have at least 48GB of ram.
+Prior to running run 'ollama pull llama3.3:70b-instruct-q2_K' in your command line.
+This will require your machine to have at least 24GB of ram.
 
 If you don't have that RAM, you can use llama3.2 for smaller footprint models.
 
