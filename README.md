@@ -18,11 +18,10 @@ Copy .env-example to .env and update with your keys.
 
 ## Running the weekly report
 
-
-Use 'poetry lock' then 'poetry install' to get an environment installed 
+Use 'poetry lock' then 'poetry install' to get an environment installed.
 
 Edit config.yaml to give the tool an understanding of your organizational context, workstreams your org is working on and their importance, as well as examples of old highlights to mimic.
 
 Edit this_weeks_outcomes.csv, use an outcome per row
 
-Run 'poetry run weekly' to get the output in file 'highlights.txt'
+Run 'poetry run weekly' to get the output in file 'highlights.txt'.

@@ -1,6 +1,7 @@
 from litellm import completion
 import csv
 import yaml
+from .declassifier import Declassifier
 
 my_model = "groq/Llama-3.3-70b-Versatile" 
 my_api_base = None 
@@ -33,8 +34,12 @@ class WeeklyReporter:
 
 
 def main():
+
+    declassifier = Declassifier()
+
     with open('config.yaml', 'r') as file:
-        config = yaml.safe_load(file)
+        declassified = declassifier.declassify(file.read())
+        config = yaml.safe_load(declassified)
 
     reporter = WeeklyReporter(config['org_context'], 
                             config['highlight_examples'],
@@ -42,12 +47,14 @@ def main():
 
     outcomes = []
     with open('this_weeks_outcomes.csv', 'r') as file:
-        reader = csv.reader(file)
+        declassifiedoutcomes = declassifier.declassify(file.read())
+        reader = csv.reader(declassifiedoutcomes.splitlines())
         for row in reader:
             outcomes.append(row[0])
 
     with open('highlights.txt', 'w') as file:
         for outcome in outcomes:
             highlight = reporter.write_highlight(outcome)
-            print(f"\033[92m{highlight}\033[0m")
-            file.write(highlight + '\n')
+            reclassified_highlight = declassifier.reclassify(highlight)
+            print(f"\033[92m{reclassified_highlight}\033[0m")
+            file.write(reclassified_highlight + '\n')

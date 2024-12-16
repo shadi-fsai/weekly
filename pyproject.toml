@@ -13,6 +13,7 @@ distilabel = {extras = ["hf-inference-endpoints"], version = "^1.4.1"}
 
 [tool.poetry.scripts]
 weekly = "weekly.main:main"
+declassifier = "weekly.declassifier:main"
 
 
 [build-system]
