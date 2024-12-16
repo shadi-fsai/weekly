@@ -1,6 +1,7 @@
 from litellm import completion
 import csv
 import yaml
+from termcolor import colored
 from .declassifier import Declassifier
 
 my_model = "groq/Llama-3.3-70b-Versatile" 
@@ -56,5 +57,5 @@ def main():
         for outcome in outcomes:
             highlight = reporter.write_highlight(outcome)
             reclassified_highlight = declassifier.reclassify(highlight)
-            print(f"\033[92m{reclassified_highlight}\033[0m")
+            print(colored(reclassified_highlight, "green"))
             file.write(reclassified_highlight + '\n')

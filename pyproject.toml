@@ -10,6 +10,8 @@ python = "<=3.13,>=3.10"
 ollama = "^0.4.4"
 litellm = "^1.54.0"
 distilabel = {extras = ["hf-inference-endpoints"], version = "^1.4.1"}
+colored = "^2.2.4"
+termcolor = "^2.5.0"
 
 [tool.poetry.scripts]
 weekly = "weekly.main:main"

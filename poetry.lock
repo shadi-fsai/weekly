@@ -337,6 +337,17 @@ files = [
 ]
 
 [[package]]
+name = "colored"
+version = "2.2.4"
+description = "Simple python library for color and formatting to terminal"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "colored-2.2.4-py3-none-any.whl", hash = "sha256:a7069673bd90a35f46cb748d012c17284a0668d2f1c06bc7a51822a2d5ad2112"},
+    {file = "colored-2.2.4.tar.gz", hash = "sha256:595e1dd7f3b472ea5f12af21d2fec8a2ea2cf8f9d93e67180197330b26df9b61"},
+]
+
+[[package]]
 name = "datasets"
 version = "3.2.0"
 description = "HuggingFace community-driven open-source library of datasets"
@@ -2275,6 +2286,20 @@ files = [
 ]
 
 [[package]]
+name = "termcolor"
+version = "2.5.0"
+description = "ANSI color formatting for output in terminal"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "termcolor-2.5.0-py3-none-any.whl", hash = "sha256:37b17b5fc1e604945c2642c872a3764b5d547a48009871aea3edd3afa180afb8"},
+    {file = "termcolor-2.5.0.tar.gz", hash = "sha256:998d8d27da6d48442e8e1f016119076b690d962507531df4890fcd2db2ef8a6f"},
+]
+
+[package.extras]
+tests = ["pytest", "pytest-cov"]
+
+[[package]]
 name = "tiktoken"
 version = "0.8.0"
 description = "tiktoken is a fast BPE tokeniser for use with OpenAI's models"
@@ -2698,4 +2723,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "<=3.13,>=3.10"
-content-hash = "c49109b73f97de888ca11dd1be0bc588066009187ce0aa4513f17068d088f855"
+content-hash = "9c76e8f53c0802d7da4324ef611917831d4bba0e3f86195416fcf8ee825f6a02"
