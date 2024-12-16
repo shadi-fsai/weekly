@@ -1,0 +1,14 @@
+org_context: | #describe the organization
+  We are a marketing team inside the non profit Minorio, 
+  Our organization helps pre-industry engineers get experience through open source projects. We work with the volunteer tech leads who support the interns when they work on their projects.
+
+highlight_examples: | #examples of old highlights to be used as reference
+  [CrewAI] We had a pull request merge accepted by CrewAI for the proposed fix of the flows example. 
+  [Llama-stack] Our proposed model tagging was accepted by the community, and we are on a path to landing the pull request merge
+
+workstream_importance: | #explain the importance of workstreams to allow the tool to explain highlights impact
+  [CrewAI] CrewAI is one of the projects our team has been training new interns on
+  [Llama-stack] Llama stack is one of the projects our team has been training new interns on
+  [Community Launch] Our goal for this workstream is to create a new way to train new interns that doesn't rely on 1x1 mentoring
+  [Volunteer recruitment] Our organization relies on volunteer team leads, we aim to increase the number of team leads available
+  [Intern recruitment] To achieve our goal of training more pre-industry interns, we need to attract interns to our program

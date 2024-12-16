@@ -1,14 +1,14 @@
 from litellm import completion
 import csv
-import logging
+import yaml
 
-#my_model = "groq/Llama-3.3-70b-Versatile" 
-#my_api_base = None 
+my_model = "groq/Llama-3.3-70b-Versatile" 
+my_api_base = None 
 
-my_model ='ollama/llama3.3:70b-instruct-q2_K'
-my_api_base = "http://localhost:11434"
+#my_model ='ollama/llama3.3:70b-instruct-q2_K'
+#my_api_base = "http://localhost:11434"
 
-
+        
 class WeeklyReporter:
     def __init__(self, org_context, highlight_examples, workstream_importance):
         self.org_context = org_context
@@ -31,20 +31,14 @@ class WeeklyReporter:
         return response['choices'][0]['message']['content']
 
 
+
 def main():
-    # Organizational context, what the organization does, its goals, who are its customers, collaborators, etc.
-    with open('orgcontext.txt', 'r') as file:
-        org_context = file.read()
+    with open('config.yaml', 'r') as file:
+        config = yaml.safe_load(file)
 
-    # Examples of old highlights to capture the style
-    with open('highlight-examples.txt', 'r') as file:
-        highlight_examples = file.read()
-
-    # Workstream importance, what are the existing workstreams and why are they important - this helps the tool explain the outcomes in a meaningful way
-    with open('workstream-importance.txt', 'r') as file:
-        workstream_importance = file.read()
-
-    reporter = WeeklyReporter(org_context, highlight_examples, workstream_importance)
+    reporter = WeeklyReporter(config['org_context'], 
+                            config['highlight_examples'],
+                            config['workstream_importance'])
 
     outcomes = []
     with open('this_weeks_outcomes.csv', 'r') as file:

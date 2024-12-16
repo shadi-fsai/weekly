@@ -21,9 +21,7 @@ Copy .env-example to .env and update with your keys.
 
 Use 'poetry lock' then 'poetry install' to get an environment installed 
 
-Edit highlight-examples.txt to provide examples of what properly formatted highlights look like.
-Edit orgcontext.txt to explain your organizational context, this improves the quality of the output highlights
-Edit workstream-importance.txt to give context on specific workstreams your org is running, this allows the tool to produce better explanaitaions of impact.
+Edit config.yaml to give the tool an understanding of your organizational context, workstreams your org is working on and their importance, as well as examples of old highlights to mimic.
 
 Edit this_weeks_outcomes.csv, use an outcome per row
 
