@@ -12,11 +12,12 @@ litellm = "^1.54.0"
 distilabel = {extras = ["hf-inference-endpoints"], version = "^1.4.1"}
 colored = "^2.2.4"
 termcolor = "^2.5.0"
+boto3 = "^1.35.86"
 
 [tool.poetry.scripts]
 weekly = "weekly.main:main"
 declassifier = "weekly.declassifier:main"
-
+datagen = "weekly.datagen:main"
 
 [build-system]
 requires = ["poetry-core"]

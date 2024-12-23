@@ -1,11 +1,18 @@
 from litellm import completion
 import json
 from termcolor import colored
+from pydantic import BaseModel
 
 my_local_model = 'ollama/llama3.1:8b-instruct-q3_K_M'
+my_local_model ='ollama/granite3.1-dense:8b'
 my_local_api_base = "http://localhost:11434"
 
-#this 
+#my_local_model = "groq/Llama-3.3-70b-Versatile" 
+#my_local_api_base = None 
+
+class Output(BaseModel):
+    entities: list[str]
+
 class Declassifier:
     def __init__(self):
         self.original_to_fiction = {}
@@ -20,11 +27,16 @@ class Declassifier:
         response = completion(
             model=my_local_model, 
             messages=[
-                {"role": "system", "content": "You are an entity extraction tool."},
-                {"role": "user", "content": "Return a JSON list only. Extract all the "+entity_type+"names from the following text only: {" + text + "}\n A Json list of entity names and nothing else:"}
+                {"role": "system", "content": "You are an entity extraction tool. respond in json format only."},
+                {"role": "user", "content": "Extract a list with all the "+entity_type+"names from the text. Here is the text: \n" + text + "}\n Only respond with valid JSON of a LIST of items."}
             ],
+            response_format={
+                "type": "json_schema",
+                "json_schema": Output.model_json_schema(),
+            },
             api_base=my_local_api_base  # Ollama's default address
         )
+        print (response['choices'][0]['message']['content'])
         return json.loads(response['choices'][0]['message']['content'])
         
 
