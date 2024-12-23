@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from typing import List
 
 
-my_model = "groq/Llama-3.3-70b-Versatile" 
+my_model = "groq/Llama-3.3-70b-Versatile"
 my_api_base = None 
 
 company_names = [
@@ -77,7 +77,7 @@ def generate_random_highlight(company_names, employee_names, project_names):
     companies = random.sample(company_names, random.randint(1, 2))
     people = random.sample(people_names, random.randint(1, 3))
     word_count = random.randint(80, 120)
-    prompt = f"Generate 10 radically different versions of a '{word_count}'-word highlight for the project named \"'{project}'\" involving companies {', '.join(companies)} and employees {', '.join(people)}. You might want to include impactful statistics to make the highlight engaging. return only one of the highlights generated."
+    prompt = f"Generate 10 radically different versions of a '{word_count}'-word highlight for the project named \"'{project}'\" involving companies {', '.join(companies)} and employees {', '.join(people)}. Make sure to include all of these named entities. You might want to include impactful statistics to make the highlight engaging. return only one of the highlights generated, with NOTHING else before or after that."
 
     response = completion(
         model=my_model,
@@ -154,4 +154,29 @@ def main():
             continue
 
 
+def create_conversation(sample):
+  return {
+    "messages": [
+      {"role": "system", "content": "You are a data extraction tool. Return answers in JSON format only."},
+      {"role": "user", "content": "Identify the project names, company names, and people names in the following highlight: '" + sample["highlight"] + "'"},
+      {"role": "assistant", "content": sample["highlight_data"]}
+    ]
+  }
+
+def transform_to_trainable_json():
+    with open('generated_highlight_samples.csv', mode='r') as file:
+        reader = csv.reader(file)
+        conversations = []
+        for row in reader:
+            highlight, highlight_data = row
+            sample = {
+            "highlight": highlight,
+            "highlight_data": highlight_data
+            }
+            conversation = create_conversation(sample)
+            conversations.append(conversation)
+        
+        with open('trainable_data.json', 'w') as json_file:
+            json.dump(conversations, json_file, indent=4)
+        
         

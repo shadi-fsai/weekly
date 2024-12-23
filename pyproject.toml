@@ -18,6 +18,7 @@ boto3 = "^1.35.86"
 weekly = "weekly.main:main"
 declassifier = "weekly.declassifier:main"
 datagen = "weekly.datagen:main"
+transform_to_trainable_json = "weekly.datagen:transform_to_trainable_json"
 
 [build-system]
 requires = ["poetry-core"]
