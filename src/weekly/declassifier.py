@@ -2,6 +2,7 @@ from litellm import completion
 import json
 from termcolor import colored
 from pydantic import BaseModel
+from typing import List
 
 my_local_model = 'ollama/hf.co/shadicopty/llama3.2-entity'
 my_local_api_base = "http://localhost:11434"
@@ -9,8 +10,10 @@ my_local_api_base = "http://localhost:11434"
 #my_local_model = "groq/Llama-3.3-70b-Versatile" 
 #my_local_api_base = None 
 
-class Output(BaseModel):
-    entities: list[str]
+class HighlightSchema(BaseModel):
+    projects: List[str]
+    companies: List[str]
+    people: List[str]
 
 class Declassifier:
     def __init__(self):
@@ -22,17 +25,14 @@ class Declassifier:
         self.original_to_fiction[original] = fictional
         self.fiction_to_original[fictional] = original
 
-    def extract_entity(self, text, entity_type):
+    def extract_entity(self, text):
         response = completion(
             model=my_local_model, 
             messages=[
                 {"role": "system", "content": "You are an entity extraction tool. respond in json format only."},
-                {"role": "user", "content": "Extract a list with all the "+entity_type+"names from the text. Here is the text: \n" + text + "}\n Only respond with valid JSON of a LIST of items."}
+                {"role": "user", "content": "Extract the company, project and people names from the text. Here is the text: \n" + text + "}\n Only respond with valid JSON of a LIST of items."}
             ],
-            response_format={
-                "type": "json_schema",
-                "json_schema": Output.model_json_schema(),
-            },
+            response_format=HighlightSchema,
             api_base=my_local_api_base  # Ollama's default address
         )
         print (response['choices'][0]['message']['content'])
@@ -56,8 +56,10 @@ class Declassifier:
     def declassify(self, text) -> str:
         ''' this function takes in a text and replaces all the sensitive information (company names, workstream names, people names)
         It creates fictional names for these entities and returns the text with the fictional names'''
-        companies = self.extract_entity(text, "company")
-        people = self.extract_entity(text, "person")
+        entities = self.extract_entity(text)
+        companies = entities['companies']
+        people = entities['people']
+        projects = entities['projects']
 
         # Remove any person names that also exist in the companies list
         people = [person for person in people if person not in companies]
@@ -76,6 +78,13 @@ class Declassifier:
             self.add_entity(person, fictional_name)
             text = text.replace(person, fictional_name)
 
+        for project in projects:
+            if project in self.original_to_fiction:
+                continue
+            fictional_name = self.create_fictional_name(project, "project")
+            self.add_entity(project, fictional_name)
+            text = text.replace(project, fictional_name)
+
         return text
 
     def reclassify(self, text) -> str:
@@ -87,7 +96,7 @@ class Declassifier:
 
 def main():
     declassifier = Declassifier()
-    text = "This week we had a great meeting with Apple and Facebook, we discussed the new project with the workstream called Project X. We also hired a new person named John Doe"
+    text = "This week we had a great meeting with Apple and Facebook, we discussed the new project GenXneG. Steve did a great job presenting the new features to the team."
     print(colored("Declassifying original text:" + text + "\n", "green"))
     declassified_text = declassifier.declassify(text)
     print(colored(declassified_text, "green"))

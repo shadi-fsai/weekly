@@ -107,6 +107,21 @@ class HighlightSchema(BaseModel):
     companies: List[str]
     people: List[str]
 
+def extract_entities(highlight):
+    prompt = f"Identify the project names, company names, and people names in the following highlight: '{highlight}'"
+
+    response = completion(
+        model=my_model,
+        messages=[
+            {"role": "system", "content": "You are a data extraction tool."},
+            {"role": "user", "content": prompt}
+        ],
+        response_format=HighlightSchema,
+        temperature=0
+    )
+    identified_entities = response['choices'][0]['message']['content']
+    return identified_entities    
+
 class ComparisonSchema(BaseModel):
     different_entities: int
 
@@ -115,23 +130,13 @@ def main():
     for _ in range(1000):
         try:
             [highlight, highlight_data] = generate_random_highlight(company_names, people_names, project_names)
-            prompt = f"Identify the project names, company names, and people names in the following highlight: '{highlight}'"
-
-            response = completion(
-            model=my_model,
-            messages=[
-            {"role": "system", "content": "You are a data extraction tool."},
-            {"role": "user", "content": prompt}
-            ],
-            response_format=HighlightSchema,
-            temperature=0
-            )
-            identified_entities = response['choices'][0]['message']['content']
-            identified_entities_json = json.loads(identified_entities)
             highlight_data_json = json.dumps(highlight_data)
-            print(colored(identified_entities_json, 'blue'))
             print(colored(highlight_data_json, 'magenta'))
-
+            continue
+            identified_entities = extract_entities(highlight)
+            identified_entities_json = json.loads(identified_entities)
+            print(colored(identified_entities_json, 'blue'))
+            
             comparison_prompt = f"Compare the following two JSON objects and determine if they have the same entity names:\n\nJSON 1: {json.dumps(highlight_data)}\n\nJSON 2: {json.dumps(identified_entities_json)}, ignore structural differences, only focus on the names that show up in each. return the number of different entities"
 
             comparison_response = completion(
