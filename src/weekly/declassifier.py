@@ -3,7 +3,7 @@ import json
 from termcolor import colored
 from pydantic import BaseModel
 
-my_local_model = 'ollama/llama3.1:8b-instruct-q3_K_M'
+my_local_model = 'ollama/hf.co/shadicopty/llama3.2-entity'
 my_local_api_base = "http://localhost:11434"
 
 #my_local_model = "groq/Llama-3.3-70b-Versatile" 

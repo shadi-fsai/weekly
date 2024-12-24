@@ -8,7 +8,7 @@ import json
 import random
 from pydantic import BaseModel
 from typing import List
-
+import boto3
 
 my_model = "groq/Llama-3.3-70b-Versatile"
 my_api_base = None 
@@ -178,5 +178,3 @@ def transform_to_trainable_json():
         
         with open('trainable_data.json', 'w') as json_file:
             json.dump(conversations, json_file, indent=4)
-        
-        
