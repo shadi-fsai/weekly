@@ -104,10 +104,11 @@ def generate_random_highlight(company_names, people_names, project_names):
 
     with open('generated_highlight_samples.csv', mode='a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow([highlight, highlight_data])
-        memory[str(highlight_data)] = highlight
+        highlight_data_json = json.dumps(highlight_data)
+        writer.writerow([highlight, highlight_data_json])
+        memory[str(highlight_data_json)] = highlight
     print(colored(highlight, 'green'))
-    return [highlight, highlight_data]
+    return [highlight, highlight_data_json]
 
 class HighlightSchema(BaseModel):
     projects: List[str]
@@ -136,15 +137,13 @@ def main():
 
     for _ in range(100):
         try:
-            [highlight, highlight_data] = generate_random_highlight(company_names, people_names, project_names)
-            highlight_data_json = json.dumps(highlight_data)
+            [highlight, highlight_data_json] = generate_random_highlight(company_names, people_names, project_names)
             print(colored(highlight_data_json, 'magenta'))
             
-            identified_entities = extract_entities(highlight)
-            identified_entities_json = json.loads(identified_entities)
+            identified_entities_json = extract_entities(highlight)
             print(colored(identified_entities_json, 'blue'))
             
-            comparison_prompt = f"Compare the following two JSON objects and determine if they have the same entity names:\n\nJSON 1: {json.dumps(highlight_data)}\n\nJSON 2: {json.dumps(identified_entities_json)}, ignore structural differences, only focus on the names that show up in each. return the number of different entities"
+            comparison_prompt = f"Compare the following two JSON objects and determine if they have the same entity names:\n\nJSON 1: {highlight_data_json}\n\nJSON 2: {json.dumps(identified_entities_json)}, ignore structural differences, only focus on the names that show up in each. return the number of different entities"
 
             comparison_response = completion(
             model=my_model,
