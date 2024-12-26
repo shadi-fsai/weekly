@@ -1,23 +1,75 @@
+import json
+import pydantic
 from opik import Opik
 from opik.evaluation import evaluate
 import csv
-from opik.evaluation.metrics import (Hallucination, Moderation, IsJson)
-from opik.evaluation.metrics import GEval
+from opik.evaluation.metrics import (LevenshteinRatio, IsJson)
+from opik.evaluation.metrics import base_metric, score_result
+
+from typing import Any
 
 from pydantic import BaseModel
 from typing import List
 from litellm import completion
 
 import dotenv
+
+my_eval_model = "groq/Llama-3.3-70b-Versatile"
+
+
+class LLMJudgeScoreFormat(pydantic.BaseModel):
+    score: int
+    reason: str
+
+class LLMJudgeMetric(base_metric.BaseMetric):
+    def __init__(self, name: str = "Accurate Response"):
+        self.name = name
+        self.prompt_template = """
+        TASK:
+        You are an expert judge tasked with evaluating the precision of a given AI response.
+        In the provided text, the OUTPUT must include all the named entities from REFERENCE in the right categories. OUTPUT should no include names that are not from REFERENCE. 
+        It must be JSON formatted and consistenly formatted. Penalize significantly for missing entities, wrong entities, wrong categories, and wrong formatting. For the formatting it should precisely comply  with 'projects': [], 'companies': [], 'people': []. even if the list is empty or has a single value, it should be present. 
+        If all of the above are correct, give a score of 1. If there are minor issues, give a score of 0.75. 
+        If the answer is not JSON, give a score of 0.
+        If the answer is JSON but does not have the right format, give a score of 0.25.
+        If the answer is JSON, in the right format, but is missing some entities give it 0.5
+    
+        Your answer should include a score and a reason for the score.
+
+        OUTPUT: {output}
+        REFERENCE: {reference}
+        """
+
+    def score(self, output: str, reference:str, **ignored_kwargs: Any):
+        print (f"SCORING Output: {output}, Reference: {reference}")
+        """
+        Score the output a of an LLM.
+
+        Args:
+            output: The output of an LLM to score.
+            reference: Text that the output should be compared against.
+            **ignored_kwargs: Any additional keyword arguments. This is important so that the metric can be used in the `evaluate` function.
+        """
+        # Construct the prompt based on the output of the LLM
+        prompt = self.prompt_template.format(output=output, reference=reference)
+
+        # Generate and parse the response from the LLM
+        response = completion(
+            model=my_eval_model, 
+            messages=[{"role": "user", "content": prompt}],
+            response_format=LLMJudgeScoreFormat,
+        )
+
+        final_score = float(json.loads(response.choices[0].message.content)["score"])
+        reason = json.loads(response.choices[0].message.content)["reason"]
+            # Return the score and the reason
+        return score_result.ScoreResult(
+            name=self.name, value=final_score, reason=reason
+        )
+ 
 dotenv.load_dotenv()
 
 opik_client = Opik()
-
-metricGEval = GEval(
-    task_introduction="You are an expert judge tasked with evaluating the faithfulness of an AI-generated answer to the given context.",
-    evaluation_criteria="In the provided text, the OUTPUT must include all the named entities from INPUT in the right categories; it must be JSON formatted",
-)
-
 my_model = "ollama/hf.co/shadicopty/llama3.2-entity"
 
 class HighlightSchema(BaseModel):
@@ -58,31 +110,28 @@ def setup(client):
 def evaluation_task(dataset_item):
     # your LLM application is called here
     input = dataset_item["highlight"]
-    precontext = "You are a data extraction tool. Return answers in JSON format only."
-    with opik_client.start("generate_text"):
-        answer = extract_entities(input)
+    precontext = "You are a data extraction tool. Return answers in JSON format only."    
+    answer = extract_entities(input)
     result = {
         "input": input,
         "output": answer,
         "context": [precontext],
-        "reference": ""
+        "reference": str(dataset_item["highlight_data"][0])
     }
     return result
 
 def main():
     dataset = setup(opik_client)
 
-    metrics = [Hallucination(), metricGEval, IsJson()]
+    metrics = [LLMJudgeMetric(), IsJson(), LevenshteinRatio()]
     global my_model
-    for llm in ["ollama/hf.co/shadicopty/llama3.2-entity",
+    for llm in [
+                "ollama/hf.co/shadicopty/llama3.2-entity",
                 "ollama/hf.co/shadicopty/llama3.2-entity-1b",
-                "ollama/granite3.1-dense:8b",
                 "ollama/granite3.1-moe:3b",
                 "ollama/granite3.1-dense:2b",
-                "ollama/phi3.5:latest",
                 "ollama/qwen2.5:3b-instruct",
                 "ollama/llama3.2:3b-instruct-fp16",
-                "ollama/llama3.1:8b-instruct-q3_K_M",
                 "ollama/llama3.2"]:
         my_model = llm
         eval_results = evaluate(
