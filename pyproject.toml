@@ -21,6 +21,7 @@ declassifier = "weekly.declassifier:main"
 datagen = "weekly.datagen:main"
 transform_to_trainable_json = "weekly.datagen:transform_to_trainable_json"
 evals = "weekly.evals:main"
+datagen2 = "weekly.datagen2:main"
 
 [build-system]
 requires = ["poetry-core"]

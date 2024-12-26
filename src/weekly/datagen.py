@@ -72,12 +72,18 @@ project_names = [
     "Lunar Orbiter", "Ranger", "New Horizons", "Dawn", "Stardust"
 ]
 
-def generate_random_highlight(company_names, employee_names, project_names):
+memory = {}
+
+def generate_random_highlight(company_names, people_names, project_names):
     project = random.choice(project_names)
     companies = random.sample(company_names, random.randint(1, 2))
     people = random.sample(people_names, random.randint(1, 3))
     word_count = random.randint(80, 120)
-    prompt = f"Generate 10 radically different versions of a '{word_count}'-word highlight for the project named \"'{project}'\" involving companies {', '.join(companies)} and employees {', '.join(people)}. Make sure to include all of these named entities. You might want to include impactful statistics to make the highlight engaging. return only one of the highlights generated, with NOTHING else before or after that."
+    global memory
+    prompt = f"Generate a '{word_count}'-word highlight for the project named \"'{project}'\" involving companies {', '.join(companies)} and employees {', '.join(people)}. Make sure to include all of these named entities. You might want to include impactful statistics to make the highlight engaging. return only one of the highlights generated, with NOTHING else before or after that.\n"+\
+        "Use sentence structure and styles that are different than:{" + "".join(memory.values()) + "}"
+        
+    print(colored(prompt, 'red'))
 
     response = completion(
         model=my_model,
@@ -99,6 +105,7 @@ def generate_random_highlight(company_names, employee_names, project_names):
     with open('generated_highlight_samples.csv', mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([highlight, highlight_data])
+        memory[str(highlight_data)] = highlight
     print(colored(highlight, 'green'))
     return [highlight, highlight_data]
 
@@ -127,12 +134,12 @@ class ComparisonSchema(BaseModel):
 
 def main():
 
-    for _ in range(1000):
+    for _ in range(100):
         try:
             [highlight, highlight_data] = generate_random_highlight(company_names, people_names, project_names)
             highlight_data_json = json.dumps(highlight_data)
             print(colored(highlight_data_json, 'magenta'))
-            continue
+            
             identified_entities = extract_entities(highlight)
             identified_entities_json = json.loads(identified_entities)
             print(colored(identified_entities_json, 'blue'))
