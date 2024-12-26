@@ -15,8 +15,6 @@ from litellm import completion
 import dotenv
 
 my_eval_model = "groq/Llama-3.3-70b-Versatile"
-my_eval_model = "gpt-4o"
-
 
 class LLMJudgeScoreFormat(pydantic.BaseModel):
     score: int
