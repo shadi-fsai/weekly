@@ -70,11 +70,32 @@ project_names = [
     "Curiosity", "Perseverance", "Opportunity", "Spirit", "Pathfinder",
     "Insight", "Phoenix", "Viking", "Mariner", "Surveyor",
     "Lunar Orbiter", "Ranger", "New Horizons", "Dawn", "Stardust"
-]
+    "Aegis", "Helix", "Nimbus", "Quantum", "Zenith",
+    "Vortex", "Eclipse", "Odyssey", "Pinnacle", "Spectra",
+    "Fusion", "Horizon", "Mosaic", "Vertex", "Catalyst",
+    "Nova", "Pulse", "Radiant", "Stratos", "Titan",
+    "Aurora", "Blaze", "Echo", "Falcon", "Genesis",
+    "Inferno", "Jupiter", "Krypton", "Luminous", "Mirage",
+    "Nebula", "Orion", "Phoenix", "Quasar", "Raven",
+    "Sapphire", "Tempest", "Umbra", "Vanguard", "Whisper",
+    "Xenon", "Zephyr", "Aether", "Bolt", "Cascade",
+    "Drift", "Ember", "Flare", "Glacier", "Halo",
+    "Ignite", "Jade", "Kaleidoscope", "Lynx", "Meteor",
+    "Nimbus", "Onyx", "Pulse", "Quicksilver", "Rift",
+    "Solstice", "Tundra", "Ultraviolet", "Vortex", "Wavelength",
+    "Xenith", "Yonder", "Zen", "Abyss", "Blizzard",
+    "Crescent", "Dynamo", "Equinox", "Frost", "Gale",
+    "Haven", "Ion", "Jolt", "Kinetic", "Lunar",
+    "Mystic", "Nexus", "Orbit", "Pioneer", "Quest",
+    "Rogue", "Stellar", "Tidal", "Utopia", "Voyage"]
 
+used_in_training = { "projects": [ "Pulse", "Stratos", "Kinetic", "Jade", "Zen", "Halo", "Falcon", "Webb", "Mystic", "Inferno", "Dynamo", "Eclipse", "Zenith", "Tidal", "Nova", "Rogue", "Quantum", "Aether", "Xenon", "Bolt", "Fusion", "Gale", "Zephyr", "Chandra", "Yonder", "Whisper", "Voyage", "Nimbus", "Umbra", "Kaleidoscope" ], "companies": [ "Sony", "Wells Fargo", "Bank of America", "Abbott", "BNP Paribas", "Snap", "Medtronic", "Chevron", "LG", "ING", "Nike", "MetLife", "Royal Bank of Canada", "PayPal", "Credit Suisse", "Nestle", "AXA", "Eli Lilly", "Home Depot", "NVIDIA", "Philips", "TD Bank", "Qualcomm", "Boeing", "McDonald's", "Aflac", "PepsiCo", "Xiaomi", "Samsung", "General Motors", "Toyoata", "Coca-Cola" ], "people": [ "James", "Jessica Wilson", "Ryan", "Chloe Flores", "Steven", "Kathleen Torres", "Jonathan", "Henry", "Brian", "Lily Jenkins", "Patrick", "Rebecca Rivera", "Emma Henderson", "Jessica Wilson", "Gary", "Kimberly Stewart", "Aaron", "Jason", "Megan Jenkins", "Patricia Baker", "Victoria Simmons", "Daniel", "Jeffrey", "Kevin", "Nancy Young", "Laura Hernandez", "Sophia Hayes", "Robert", "Stephen", "Olivia Patterson", "Scott", "Michael", "Michelle Morris", "Sarah Lee", "Emily Davis", "Joseph" ] }
 memory = {}
 
 def generate_random_highlight(company_names, people_names, project_names):
+    project_names = [project for project in project_names if project not in used_in_training["projects"]]
+    company_names = [company for company in company_names if company not in used_in_training["companies"]]
+    people_names = [person for person in people_names if person not in used_in_training["people"]]
     project = random.choice(project_names)
     companies = random.sample(company_names, random.randint(1, 2))
     people = random.sample(people_names, random.randint(1, 3))
@@ -97,7 +118,7 @@ def generate_random_highlight(company_names, people_names, project_names):
     highlight = response['choices'][0]['message']['content']
 
     highlight_data = {
-        "projects": project,
+        "projects": [project],
         "companies": companies,
         "people": people
     }
@@ -135,11 +156,11 @@ class ComparisonSchema(BaseModel):
 
 def main():
 
-    for _ in range(100):
+    for _ in range(40):
         try:
             [highlight, highlight_data_json] = generate_random_highlight(company_names, people_names, project_names)
             print(colored(highlight_data_json, 'magenta'))
-            
+            continue
             identified_entities_json = extract_entities(highlight)
             print(colored(identified_entities_json, 'blue'))
             

@@ -15,6 +15,7 @@ from litellm import completion
 import dotenv
 
 my_eval_model = "groq/Llama-3.3-70b-Versatile"
+my_eval_model = "gpt-4o"
 
 
 class LLMJudgeScoreFormat(pydantic.BaseModel):
@@ -41,7 +42,6 @@ class LLMJudgeMetric(base_metric.BaseMetric):
         """
 
     def score(self, output: str, reference:str, **ignored_kwargs: Any):
-        print (f"SCORING Output: {output}, Reference: {reference}")
         """
         Score the output a of an LLM.
 
@@ -102,7 +102,7 @@ def setup(client):
         for row in csv_reader:
             highlight = list(row.values())[0]
             highlight_data = list(row.values())[1:]
-            print(f"Highlight: {highlight}, Highlight Data: {highlight_data}")
+            #print(f"Highlight: {highlight}, Highlight Data: {highlight_data}")
             # Create a dataset item
             dataset.insert([{"highlight": highlight, "highlight_data": highlight_data}])
     return dataset
@@ -126,6 +126,11 @@ def main():
     metrics = [LLMJudgeMetric(), IsJson(), LevenshteinRatio()]
     global my_model
     for llm in [
+                "groq/Llama-3.3-70b-Versatile",
+                "gpt-4o",
+                "gpt-4o-mini",
+                "gemini/gemini-1.5-flash",
+                "gemini/gemini-1.5-pro-latest",
                 "ollama/hf.co/shadicopty/llama3.2-entity",
                 "ollama/hf.co/shadicopty/llama3.2-entity-1b",
                 "ollama/granite3.1-moe:3b",
