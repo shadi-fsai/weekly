@@ -160,7 +160,7 @@ def main():
         try:
             [highlight, highlight_data_json] = generate_random_highlight(company_names, people_names, project_names)
             print(colored(highlight_data_json, 'magenta'))
-            continue
+            
             identified_entities_json = extract_entities(highlight)
             print(colored(identified_entities_json, 'blue'))
             
